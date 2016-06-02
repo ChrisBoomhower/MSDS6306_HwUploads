@@ -1,21 +1,25 @@
-##########################################################
-## Author: Chris Boomhower                              ##
-## MSDS 6306 - Homework 4                               ##
-## 05/28/2016                                           ##
-##                                                      ##
-## Instructions: Write bootstrap code to                ##
-## illustrate the central limit theorem in              ##
-## R markdown and push the result to GitHub.            ##
-## Use a normal distribution with two different         ##
-## sample sizes and an exponential distribution         ##
-## with two different sample sizes. Correct code        ##
-## alone is insufficient. Please also comment on        ##
-## the code and explain the results. For help,          ##
-## see the lotsa.medians function in unit 2. The        ##
-## deliverable is a link to a GitHub repo containing    ##
-## the code.                                            ##
-##########################################################
+---
+title: "Cboomhower_BootstrapRAssignment"
+author: "Chris Boomhower"
+date: "June 1, 2016"
+output:
+  html_document:
+    keep_md: true
+---
 
+### Assignment instructions per 2DS Week 4 Homework:
+> Write bootstrap code to illustrate the central limit theorem in R markdown and push the result to GitHub. Use a normal distribution with two different sample sizes and an exponential distribution with two different sample sizes. Correct code alone is insufficient. Please also comment on the code and explain the results. For help, see the lotsa.medians function in unit 2. The deliverable is a link to a GitHub repo containing the code.
+
+<br>
+
+### Function Description:
+#### Two different functions were created to generate random normal and exponential data, to visualize said data, to conduct the bootstrap sampling, and to produce bootstrap mean values' summary statistics and histogram data. Detailed descriptions of each function are provided in the code comments below.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+```
+
+```{r}
 ##########################################################
 ## Function: sampFunc()
 ## Inputs:   n == number of sample data to collect
@@ -122,19 +126,70 @@ analyze <- function(N, repeats, DistTYPE) {
     print(paste("Bootstrap means' standard deviation =",round(sd(BOOTMean),4)))
     print(paste("Standard error of the sample mean =",round((sampleSD/sqrt(N)),4)))
 }
+```
 
+<br>
+
+### Bootstrapping Setup:
+#### I chose to collect sample sizes of 10 and 100 for both random normal and random exponential sampling to get a good look at how very different sample sizes perform when bootstrapped. For bootsrap sample collection, I opted to run 2000 bootstrap samples.
+```{r}
 ## Initialize variables
 repeats <- 2000 # Number of bootstrap samples to collect
 distNorm <- "n" # Normal distribution selection
 distExp <- "e" # Exponential distribution selection
 samp1 <- 100
 samp2 <- 10
+```
 
+<br>
+
+### Normal Distribution Outputs - Sample Size of 100
+```{r}
 ## Set graphical parameters for histograms
 par(mfrow = c(1, 2), cex.main = 0.8)  # 2 rows and 2 columns with title text shrink by 20%
 
-## Demonstration of Central Limit Theorem
-analyze(samp1, repeats, distNorm) # Normal Distribution 100 Samples
-analyze(samp2, repeats, distNorm) # Normal Distribution 10 Samples
-analyze(samp1, repeats, distExp) # Exponential Distribution 100 Samples
-analyze(samp2, repeats, distExp) # Exponential Distribution 10 Samples
+## Normal Distribution 100 Samples - Demonstration of Central Limit Theorem
+analyze(samp1, repeats, distNorm)
+```
+
+<br>
+
+### Normal Distribution Outputs - Sample Size of 10
+```{r}
+## Set graphical parameters for histograms
+par(mfrow = c(1, 2), cex.main = 0.8)  # 2 rows and 2 columns with title text shrink by 20%
+
+## Normal Distribution 10 Samples - Demonstration of Central Limit Theorem
+analyze(samp2, repeats, distNorm)
+```
+
+<br>
+
+### Exponential Distribution Outputs - Sample Size of 100
+```{r}
+## Set graphical parameters for histograms
+par(mfrow = c(1, 2), cex.main = 0.8)  # 2 rows and 2 columns with title text shrink by 20%
+
+## Exponential Distribution 100 Samples - Demonstration of Central Limit Theorem
+analyze(samp1, repeats, distExp)
+```
+
+<br>
+
+### Exponential Distribution Outputs - Sample Size of 10
+```{r}
+## Set graphical parameters for histograms
+par(mfrow = c(1, 2), cex.main = 0.8)  # 2 rows and 2 columns with title text shrink by 20%
+
+## Exponential Distribution 10 Samples - Demonstration of Central Limit Theorem
+analyze(samp2, repeats, distExp)
+```
+
+<br>
+
+### Results in Review:
+#### The Central Limit Theorem is clearly displayed when comparing the effects of bootstrapping on randomized sample sizes of 10 and 100. This applies for both normal and exponentially distributed data. The summary statistics indicate that the original sample data is spread over a larger range than the bootstrapped data and that the original data has a wider IQR as well, suggesting a larger standard deviation. Of additional interest is that the mean of the original random sample data and the mean of the bootstrapped data are practically equal. We can imagine the original data is being treated as though it were the population, so when taking many samples from this population and calculating the mean of the samples, the bootstrap sample mean is expected to be close to the original data.
+
+#### When plotting original data and bootstrapped data in histogram form, it is easier to see that the bootstrapped data is also more normally distributed than the original data. This is most obvious for exponentially distributed samples. It's important to note that sample sizes of 100 seem to distribute more normally and tightly when bootstrapping than the sample size of 10. For example, the bootstrapped data for sample sizes of 10 have ranges that are only a little tighter than the orignal data; the difference in range is greater as the original sample size increases. Also note that the original sample mean is drawn as a red line on the bootstrap histograms and bootstrap mean is drawn in dotted blue to compare the mean values referenced in the summary statistics.
+
+#### Finally, the random sample's and bootstrap sample's standard deviations are calculated to further confirm that standard deviation improves with implementation of the Central Limit Theorem. Standard error of the sample mean is calculated for additional reference.
