@@ -6,7 +6,7 @@ output:
   html_document:
     keep_md: true
 ---
-## Introduction
+# Introduction
 
 #### Even the simplest of data can often provide meaningful insights when cleaned, merged, and analyzed in the right way. So is the case for the Worldbank.org's country GDP ranking and country education data sets. Both are independent data sets providing different types of data for more or less the same countries (How closely these data sets match up will be discussed further in this study). By cleaning and merging these data, the relationships between country income group classification and GDP ranking may be assessed. Specifically, the data within this study are tidied and merged to answer the following five questions:
 
@@ -30,7 +30,9 @@ require(knitr)
 
 _________________________________________
 
-## GDP Data: Download and Importation
+# Methods
+
+### GDP Data: Download and Importation
 
 #### The Gross Domestic Product data set is comprised of 2012 GDP values for various countries throughout the world. More recent data is hosted on Worldbank.org's website at http://data.worldbank.org/data-catalog/GDP-ranking-table.
 
@@ -59,7 +61,7 @@ kable(tail(productRaw, 100), format = "html", caption = "Last 100 Rows of Raw GD
 
 ___________________________
 
-## GDP Data: Tidying
+### GDP Data: Tidying
 
 #### Empty rows at the beginning and end of the data frame are first removed during the tidying process.
 
@@ -172,7 +174,7 @@ GDPdata <- GDPdata[order(GDPdata$Country.Code),] # Order the data by Country.Cod
 
 _______________________________
 
-## Education Data: Download and Importation
+### Education Data: Download and Importation
 
 #### The education data set, which includes the country income data of interest, is comprised of details such as education access, completion, literacy, population, teachers, etc. for various countries. More recent data is hosted on Worldbank.org's website at http://data.worldbank.org/data-catalog/ed-stats.
 
@@ -200,7 +202,7 @@ tail(EducRaw) # Review ending rows to look for irrelevant entries
 
 ____________________________
 
-## Education Data: Tidying
+### Education Data: Tidying
 
 #### As the country code columns will later be matched between GDP and income data, the name *CountryCode* is updated to *Country.Code* to reflect the same name used in the GDP data. All remaining column names are acceptable.
 
@@ -236,7 +238,7 @@ head(Income)
 
 _____________________________
 
-## Merging GDP and Income Data
+### Merging GDP and Income Data
 
 #### Now that the original data have been cleaned and only the columns of interest have been set aside for merging, GDP and Income data are ready to be merged together. After merging the two data sets together by *Country.Code*, the merged data frame's internal structure details and beginning and ending rows are observed to make sure the data merged correctly.
 ```{r}
@@ -248,7 +250,9 @@ head(MergeData) # Review beginning rows to ensure no blank observations
 
 ______________________________
 
-## Question 1: Match the data based on the country shortcode. How many of the IDs match?
+# Results
+
+### Question 1: Match the data based on the country shortcode. How many of the IDs match?
 
 #### Since NAs were not removed prior to merging the two data sets, there are some country codes that match but are still to be removed as their other columns are missing data. For this reason, the number of matching IDs is evaluated before and after NA removal.
 
@@ -267,7 +271,7 @@ nrow(MergeData1) # Provide row count after removing rows with missing data
 #### **Before removing the NA values, there are 224 matching IDs. Once all 49 NAs are removed, however, there remain 189 matching country code IDs.**
 ______________________________
 
-## Question 2: Sort the data frame in ascending order by GDP (so United States is last). What is the 13th country in the resulting data frame?
+### Question 2: Sort the data frame in ascending order by GDP (so United States is last). What is the 13th country in the resulting data frame?
 
 #### To sort the data in ascending order by GDP, the *order* function is used.
 
@@ -279,7 +283,7 @@ MergeData1$Short.Name[13] # Display only the 13th country in the data frame
 #### **After sorting the data in ascending order by GDP, St. Kitts and Nevis is the 13th country in the data frame.**
 ______________________________
 
-## Question 3: What are the average GDP rankings for the "High income: OECD" and "High income: nonOECD" groups?
+### Question 3: What are the average GDP rankings for the "High income: OECD" and "High income: nonOECD" groups?
 
 #### The *mean* function is used to calculate the average rankings for the *High income: OECD* and *High income: nonOECD* groups.
 
@@ -291,7 +295,7 @@ mean(subset(MergeData1, Income.Group == "High income: nonOECD")$Country.Rank) # 
 #### **The average *High income: OECD* GDP ranking is 32.96667 and the average *High income: nonOECD* GDP ranking is 91.91304.**
 ______________________________
 
-## Question 4: Plot the GDP for all of the countries. Use ggplot2 to color your plot by Income.Group.
+### Question 4: Plot the GDP for all of the countries. Use ggplot2 to color your plot by Income.Group.
 
 #### The *ggplot* function is used to render side-by-side boxplots of all countries' GDP by *Income.Group*.
 
@@ -319,7 +323,7 @@ ggplot(data = MergeData1, aes(x=Income.Group, y=log(GDP.Millions.of.US.Dollars),
 #### **In examining the log-transformed visualization, it is clear most of the *High income: OECD* group data exceed the remaining groups' data in terms of GDP since *High income: OECD's* first quartile (Q1) location appears to be greater in GDP value than all other groups' Q3 locations (Though *High income: OECD's* Q1 appears to be nearly identical to *Upper middle income's* Q3). That is, 75% of all *High income: OECD* data is greater than at least 75% of all other groups' data.**
 ________________________________
 
-## Question 5: Cut the GDP ranking into 5 separate quantile groups. Make a table versus Income.Group. How many countries are lower middle income but among the 38 nations with the highest GDP?
+### Question 5: Cut the GDP ranking into 5 separate quantile groups. Make a table versus Income.Group. How many countries are lower middle income but among the 38 nations with the highest GDP?
 
 #### To split the GDP rankings into 5 separate quantile groups, the *ntile* function is used from the *dplyr* package. A cross-table is then rendered to show quantile group counts by *Income.Group*. Finally, an expression is used to confirm the number of countries that are in both the *Lower middle income* group and highest GDP quantile (1) as shown in the cross-table.
 
@@ -339,7 +343,7 @@ sum(MergeData2[(nrow(MergeData2)-37):nrow(MergeData2),]$Income.Group == "Lower m
 #### **Based on the newly added quantile groupings, 5 countries from the *Lower middle income* group are among the 38 nations with the highest GDP (quantile 1).**
 ________________________________
 
-## Conclusion
+# Conclusion
 
 #### The country GDP and education data sets from Worldbank.org both provide important information regarding numerous countries throughout the world. By combining these data sets, powerful insights are gained into the relationship between each country's income group classification and GDP ranking. When analyzing these data, it becomes apparant that both data sets do not align perfectly in regards to country codes and relevant data. It is also made clear that *High income: OECD* countries rank higher in GDP than *High income: nonOECD* countries and that 75% of all *High income: OECD* country GDP data exceed at least 75% of each other income group's GDP values. Finally, combining these two data sets also allows for GDP ranking quantiles to be compared to income group classifications. By this means, it is discovered that five countries from the *Lower middle income* group also rank among the top thirty-eight countries with highest GDP. Of course, even with these newly gained insights, there is still much more available for discovery given GDP and education data obtained from Worldbank.org.
 
