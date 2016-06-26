@@ -5,13 +5,13 @@ June 25, 2016
 
 
 ##Unit 8 Live Session Prep Instructions:
-#### * Download the clickstream data. Data can be downloaded from GitHub at https://github.com/oreillymedia/doing_data_science. Do not use the data link in Rpubs.
-* #### Create a new variable ageGroup that categorizes age into following groups: < 18, 18-24, 25-34, 35-44, 45-54, 55-64 and 65+.
-* #### For a single day:
-    * #### Plot distributions of number impressions and click?through?rate (CTR = click/impression) for the age groups.
-    * #### Define new variable to segment users based on click behavior.
-    * #### Explore data and make visual comparisons across user segments.
-    * #### Create metrics/measurement/statistics that summarize the data.
+* Download the clickstream data. Data can be downloaded from GitHub at https://github.com/oreillymedia/doing_data_science. Do not use the data link in Rpubs.
+* Create a new variable ageGroup that categorizes age into following groups: < 18, 18-24, 25-34, 35-44, 45-54, 55-64 and 65+.
+* For a single day:
+    * Plot distributions of number impressions and click?through?rate (CTR = click/impression) for the age groups.
+    * Define new variable to segment users based on click behavior.
+    * Explore data and make visual comparisons across user segments.
+    * Create metrics/measurement/statistics that summarize the data.
     
 ###Load libraries and data
 
