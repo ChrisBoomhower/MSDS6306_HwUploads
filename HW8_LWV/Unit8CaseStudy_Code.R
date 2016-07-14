@@ -60,7 +60,7 @@ ynhVoters.Percent <- percent(nrow(subset(LWV.calc, Sampled == "yes" & Voter.Cate
 ## Plot count comparison of sampled vs. non sampled data by voter category and compare sampled percentages
 ggplot(LWV.calc, aes(Voter.Category, fill = Sampled)) + geom_bar() +
     geom_text(stat = 'count', aes(label = ..count..), vjust = 1, size = 2, position = "stack") +
-    ggtitle("Sample Sizes vs. Voter Category Populations") + xlab("Voter Category") + ylab("Count")
+    ggtitle("Sample Sizes vs. Population Voter Category") + xlab("Voter Category") + ylab("Count")
 
 ohVoters.Percent    #Percentage of Old Hispanic voter population sampled
 onhVoters.Percent   #Percentage of Old Not Hispanic voter population sampled
@@ -178,22 +178,26 @@ flyerSubset <- subset(LWV.calc, Treatment == "flyer")
 # pie + coord_polar(theta = "y")
 
 ## Plot control treatment group city count data for comparison
-ggplot(controlSubset, aes(city, fill = Voter.Category)) +
-    geom_bar(position = position_dodge(width = 0.75), width = 0.6) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Control Group Sample City Comparison") + xlab("City of Residence") + ylab("Count")
+# ggplot(controlSubset, aes(city, fill = Voter.Category)) +
+#     geom_bar(position = position_dodge(width = 0.75), width = 0.6) +
+#     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+#     ggtitle("Control Group Sample City Comparison") + xlab("City of Residence") + ylab("Count")
+
+ggplot(LWV.calc[LWV.calc$Sampled == "yes",], aes(Treatment, fill = city)) + geom_bar() +
+    #geom_text(stat = 'count', aes(label = ..count..), vjust = 1, position = "stack") +
+    ggtitle("Voter Category Sample Sizes by Treatment Group") + xlab("Treatment") + ylab("Count")
 
 ## Plot control treatment group city count data for comparison
-ggplot(flyerSubset, aes(city, fill = Voter.Category)) +
-    geom_bar(position = position_dodge(width = 0.75), width = 0.6) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Flyer Group Sample City Comparison") + xlab("City of Residence") + ylab("Count")
+# ggplot(flyerSubset, aes(city, fill = Voter.Category)) +
+#     geom_bar(position = position_dodge(width = 0.75), width = 0.6) +
+#     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+#     ggtitle("Flyer Group Sample City Comparison") + xlab("City of Residence") + ylab("Count")
 
 ## Plot control treatment group city count data for comparison
-ggplot(postSubset, aes(city, fill = Voter.Category)) +
-    geom_bar(position = position_dodge(width = 0.75), width = 0.6) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Post Group Sample City Comparison") + xlab("City of Residence") + ylab("Count")
+# ggplot(postSubset, aes(city, fill = Voter.Category)) +
+#     geom_bar(position = position_dodge(width = 0.75), width = 0.6) +
+#     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+#     ggtitle("Post Group Sample City Comparison") + xlab("City of Residence") + ylab("Count")
 
 # grid.arrange(p1, p2, p3)
 
@@ -201,6 +205,8 @@ ggplot(postSubset, aes(city, fill = Voter.Category)) +
 #     geom_bar(position = position_dodge(width = 0.75), width = 0.6) +
 #     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+yVoters <- LWV.calc[grep("Young", LWV.calc$Voter.Category),]              #Extract young voters
+summary(yVoters$byear, na.omit())
 ## Plot treatment group age comparison
 ggplot(subset(LWV.calc, Treatment != ""), aes(byear, color = Treatment, fill = Treatment)) +
     geom_density(alpha = 0.1) +
