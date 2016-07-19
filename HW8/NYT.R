@@ -1,17 +1,22 @@
 library(ggplot2)
 library(doBy)
 
-## Data obtained in zipped form from GitHub at https://github.com/oreillymedia/doing_data_science
-nyt <- NULL 
-for (i in 1:31){ 
-    nyt_temp <- read.csv(url(paste("http://stat.columbia.edu/~rachel/datasets/nyt",i,".csv",sep="")))
-    nyt_temp$day <- i 
-    nyt <- rbind(nyt,nyt_temp) } 
-nyt_origin <- nyt #make a copy of original dataset
+# ## Data obtained in zipped form from GitHub at https://github.com/oreillymedia/doing_data_science
+# nyt <- NULL 
+# for (i in 1:31){ 
+#     nyt_temp <- read.csv(url(paste("http://stat.columbia.edu/~rachel/datasets/nyt",i,".csv",sep="")))
+#     nyt_temp$day <- i 
+#     nyt <- rbind(nyt,nyt_temp) } 
+# nyt_origin <- nyt #make a copy of original dataset
 
-
-
-ClickDa <- read.csv("nyt15.csv") # Import data
+setwd("C:\\Users\\Owner\\Documents\\GitHub\\MSDS_6306\\MSDS6306_HwUploads\\HW8")
+ClickDa <- NULL
+for(i in 1:31){
+    nyt_temp <- read.csv(paste("nyt",i,".csv",sep = ""))
+    nyt_temp$day <- i
+    ClickDa <- rbind(ClickDa,nyt_temp)
+}
+#ClickDa <- read.csv("nyt15.csv") # Import data
 str(ClickDa)
 
 ## Create age_group category
