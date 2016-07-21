@@ -1,14 +1,35 @@
-# Untitled
+# Module 9.5 BLT Activity
 Chris Boomhower  
 July 20, 2016  
+##Instructions
+###Assignment
+* Review AGIO ticker data.
+* Download the data.
+* Calculate log returns.
+* Calculate volatility measure.
+* Calculate volatility over entire length of series for various three different decay factors.
+* Plot the results, overlaying the volatility curves on the data, just as was done in the S&P example.
 
+###Deliverable
+* Upload the Markdown file containing your code, analysis, and discussion to GitHub. Post a link to the Markdown file in the space below.
+* The markdown document should have code for entering the data, calculating log returns, calculating volatility measure, and calculating volatility for the entire series using three different decay factors.
+* Also needs to have code for a plot (and the plot itself) with the data and volatility overlaid.
+* The discussion board will talk about the differences in the volatility plots for different stocks.
 
-
+##Introduction
+We are interested in observing the volatility of Agios Pharmaceuticals (AGIO), a public American pharmaceutical company focused on developing cancer-fighting treatments. Since AGIO market data are in timescale format, a unique timescale approach must be adhered to during analysis. The *tseries* library may be used to import, calculate, and plot the data to analyze volatility.
 
 
 ```r
 library(tseries)
+```
 
+##Volatility Analysis
+###Download the Data
+When importing the data, the *get.hist.quote* function is used to download the historical AGIO financial data from Yahoo! and Oanda. We then verify that the data has been imported correctly by checking its length and displaying the first few rows of data.
+
+
+```r
 agioData <- get.hist.quote('AGIO',quote = "Close") #Import AGIO ticker data
 ```
 
@@ -43,6 +64,12 @@ head(agioData)   #Check first few rows of imported data
 ## 2013-07-31 29.16
 ```
 
+###Calculate Log Returns
+To prepare the financial data, the log returns are calculated next. Log returns are calculated because they are additive, unlike scaled percentages which are not. The other positive to log returns is that they are symmetric.... Percent returns, on the other hand, are biased in favor of gains.
+
+The log return calculation is then verified by checking the length and first few rows of data as done previously (Note the log return calculation is expected to be of the same length as the original AGIO data minus 1 due to the nature of the calculation).
+
+
 ```r
 agioLog <- log(lag(agioData)) - log(agioData) #Calculate the log returns of this data set
 length(agioLog)  #log return calculation expected to reduce length of data by 1 due to subtraction
@@ -66,6 +93,10 @@ head(agioLog)    #Check first few rows of log return data
 ## 2013-07-31 -0.0003429943
 ```
 
+###Calculate Volatility Measure
+Volatility, or amount of change in the returns, is calculated next. The measure for overall volatility is provided first as a percentage. The calculated percentage of 81.3% for volatility is significantly higher than the S&P 500's percentage of 18.0% observed in Learning Module 9.5's example!
+
+
 ```r
 agioVol <- sd(agioLog) * sqrt(250) * 100 #Calculate the volatility (estimate for overall volatility of AGIO); roughly 250 trading days in a year and multiply by 100 for percentage
 agioVol
@@ -74,6 +105,10 @@ agioVol
 ```
 ## [1] 81.30567
 ```
+
+###Calculate Volatility with Decay Factors
+The volatility over the entire length of the series for different decay factors is calculated second. The selected weights are 0.9, 0.96, and 0.99. Summary results are provided which indicate a rise in minimum volatility with the increase in decay factor values. Strangely, however, they all have the same maximum value (this will be discussed more when plotting the data).
+
 
 ```r
 ## #Function to calculate volatility in continuous lookback (Courtesy of Dr. McGee)
@@ -119,10 +154,17 @@ summary(volest3)
 ## 0.03279 0.04443 0.05049 0.05046 0.05655 0.11870
 ```
 
+###Plot Volatility Estimates
+Lastly, to gain better perspective on how these three different decay factors impact the volatility estimates, all three volatility estimates are plotted below. The initial spike explains why all volatility estimates have the same maximum value; however, without additional historical background, the reason for this extreme initial fluctuation in volatility is unknown. As expected, though, the volatility estimate with the greatest decay factor experiences the least amount of fluctuation in volatility and the estimate with the smallest decay factor displays the most volatility.
+
+
 ```r
 plot(volest, type = "l") #High peaks correspond to significant fluctuations in AGIO at that time
 lines(volest2, type = "l",col = "red")
 lines(volest3, type = "l",col = "blue")
 ```
 
-![](Cboomhower_Mod9p5Activity_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+![](Cboomhower_Mod9p5Activity_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
+##Conclusion
+While AGIO financial data appears to be relatively volatile, increasing the weight during volatility estimation dampens the changes in volatility significantly. This exercise is useful for observing the effects of weight change, but caution should be taken when choosing an appropriate weight, or decay factor, during normal analysis.
