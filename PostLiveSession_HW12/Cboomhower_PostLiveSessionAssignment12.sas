@@ -1,3 +1,10 @@
+/*******************************
+* Chris Boomhower
+* Post-Live Session HW 12
+* MSDS 6306-402
+* 8/6/16
+********************************/
+
 /* Live Session Unit 12 Assignment */
 /* Download and import files into SAS using the code below */
 /* There is code for .xlsx, .xls, and .csv files */
@@ -16,10 +23,6 @@
 /* First, link the name msds6306 with the SAS library using libname command */
 libname msds6306 '\\Client\C$\Users\Owner\Documents\GitHub\MSDS_6306\MSDS6306_HwUploads\PostLiveSession_HW12';
 /* Now change the data name to avoid overwriting and because it's just too long. */
-/*data edData;
-set msds6306.dataset1;
-run;*/
-
 proc sort data = msds6306.dataset1 out = edData; by State;
 run;
 
@@ -92,12 +95,16 @@ https://github.com/celiatsmuedu/MSDS6306402HW11Education/blob/master/AverageClas
 
 
 
+/* DUE TO APPS.SMU.EDU CITRIX SAS AND SAS UNIVERSITY EDITION LIMITATIONS PREVENTING PROC HTTP USAGE, THE FILES WERE MANUALLY DOWNLOADED AND ARE IMPORTED BELOW*/
+
+
+
 /* Import and Clean Public-Private data */
 proc import datafile = '\\Client\C$\Users\Owner\Documents\GitHub\MSDS_6306\MSDS6306_HwUploads\PostLiveSession_HW12\2014PublicPrivateSchoolsClean.csv'
 	out = PublicPrivate
-	replace;
-	getnames = yes;
-	guessingrows=100;
+	replace; *Replace existing data set if it already exists under this name;
+	getnames = yes; *Use header for variable names;
+	guessingrows=100; *Required to review all rows when determining data length (i.e. string length for a given data);
 run;
 
 proc contents data = PublicPrivate; run;
@@ -108,12 +115,10 @@ data PublicPrivateEdit;
 	State = strip(State); *Remove leading and trailing blank spaces;
 run;
 
-proc sort data = PublicPrivateEdit out = PublicPrivateSort; by State;
+proc sort data = PublicPrivateEdit out = PublicPrivateSort; by State; *Sort by State to ensure in correct order before merge with edData;
 run;
 
-proc print data = PublicPrivateSort; run; /*/////// CLEANED ////////*/
-
-
+proc print data = PublicPrivateSort; run;
 
 
 
@@ -130,17 +135,15 @@ proc contents data = PercentAPStudents; run;
 
 data PercentAPStudentsEdit;
 	set PercentAPStudents;
-	_2014_Students_in_AP_Classes = substr(_2014_Students_in_AP_Classes,1,length(_2014_Students_in_AP_Classes)-2)/100;
-	_2015_Students_in_AP_Classes = substr(_2015_Students_in_AP_Classes,1,length(_2015_Students_in_AP_Classes)-2)/100;
+	_2014_Students_in_AP_Classes = substr(_2014_Students_in_AP_Classes,1,length(_2014_Students_in_AP_Classes)-2)/100; *Remove percent sign and convert to ratio value less than 1;
+	_2015_Students_in_AP_Classes = substr(_2015_Students_in_AP_Classes,1,length(_2015_Students_in_AP_Classes)-2)/100; *Remove percent sign and convert to ratio value less than 1;
 	State = strip(State); *Remove leading and trailing blank spaces;
 run;
 
-proc sort data = PercentAPStudentsEdit out = PercentAPStudentsSort; by State;
+proc sort data = PercentAPStudentsEdit out = PercentAPStudentsSort; by State; *Sort by State to ensure in correct order before merge with edData;
 run;
 
-proc print data = PercentAPstudentsSort; run; /*/////// CLEANED ////////*/
-
-
+proc print data = PercentAPstudentsSort; run;
 
 
 
@@ -157,23 +160,19 @@ proc contents data = DeathPenalty; run;
 
 data DeathPenaltyEdit (rename=(States = State) drop = VAR1);
 	set DeathPenalty;
-	new = put(DeathPenaltyCode, 1.);
-	drop DeathPenaltyCode;
-	rename new=DeathPenaltyCode;
-	if States EQ "Federal system" | States EQ "American Samoa" | States EQ "Guam" | States EQ "Puerto Rico" | States EQ "Virgin Islands" then DELETE;
+	new = put(DeathPenaltyCode, 1.); *Convert numeric type to character for treatment as categorical data;
+	drop DeathPenaltyCode; *Remove numeric type data;
+	rename new=DeathPenaltyCode; *Rename new character type data to match old name;
+	if States EQ "Federal system" | States EQ "American Samoa" | States EQ "Guam" | States EQ "Puerto Rico" | States EQ "Virgin Islands" then DELETE; *Delete undesired state entries;
 		else if States EQ "District of Columbia" then States = "DC";
-			/*else if State EQ " Arkansas" then State = "Arkansas";
-				else if State EQ " California" then State = "Calfornia";
-					else if State EQ " New York" then State = "New York";*/
 	States = strip(States); *Remove leading and trailing blank spaces;
 run;
 
-proc sort data = DeathPenaltyEdit out = DeathPenaltySort; by State;
+proc sort data = DeathPenaltyEdit out = DeathPenaltySort; by State; *Sort by State to ensure in correct order before merge with edData;
 run;
 
 proc contents data = DeathPenaltySort; run;
-proc print data = DeathPenaltySort; run; /*/////// CLEANED ////////*/
-
+proc print data = DeathPenaltySort; run;
 
 
 
@@ -192,19 +191,15 @@ proc contents data = PopDensity; run;
 
 data PopDensityEdit (rename=(POP_KM_ = Pop_per_Sq_KM) rename=(POP_MI_ = Pop_per_Sq_Mile));
 	set PopDensity;
-	*label POP_KM_ = "Pop per Sq. KM"
-		POP_MI_ = "Pop per Sq. Mile";
 	State = strip(State); *Remove leading and trailing blank spaces;
 run;
 
-proc sort data = PopDensityEdit out = PopDensitySort; by State;
+proc sort data = PopDensityEdit out = PopDensitySort; by State; *Sort by State to ensure in correct order before merge with edData;
 run;
 
 proc contents data = PopDensitySort; run;
 
-proc print data = PopDensitySort; run; /*/////// CLEANED ////////*/
-
-
+proc print data = PopDensitySort; run;
 
 
 
@@ -222,19 +217,15 @@ proc contents data = AvgSize; run;
 
 data AvgSizeEdit (rename=(Rank = Avg_Class_Size_Rank));
 	set AvgSize;
-	State = strip(PROPCASE(State)); *Capitalize only first letter of all states;
-	if State EQ "" | STATE EQ "United States" then DELETE;
+	State = strip(PROPCASE(State)); *Capitalize only first letter of all states and remove leading and trailing blank spaces;
+	if State EQ "" | STATE EQ "United States" then DELETE; *Delete undesired or empty state entries;
 		else if State EQ "District Of Columbia" then State = "DC";
-			/*else if State EQ " Arkansas" then State = "Arkansas";
-				else if State EQ " California" then State = "Calfornia";
-					else if State EQ " New York" then State = "New York";*/
-	*State = strip(State); *Remove leading and trailing blank spaces;
 run;
 
-proc sort data = AvgSizeEdit out = AvgSizeSort; by State;
+proc sort data = AvgSizeEdit out = AvgSizeSort; by State; *Sort by State to ensure in correct order before merge with edData;
 run;
 
-proc print data = AvgSizeSort; run; /*/////// CLEANED ////////*/
+proc print data = AvgSizeSort; run;
 
 
 
@@ -253,19 +244,15 @@ proc print data = HouseholdSize; run;
 
 data HouseholdSizeEdit (rename=(A = State) rename=(D = Avg_Household_Size) rename=(G = Household_Size_Margin) drop = B drop = C drop = E drop = F);
 	set HouseholdSize;
-	*input State $ Household_Size Household_Size_Margin $;
-	if D EQ "" | D EQ "Person" | A EQ "  Puerto Rico" | A EQ "United States" then DELETE;
+	if D EQ "" | D EQ "Person" | A EQ "  Puerto Rico" | A EQ "United States" then DELETE; *Delete undesired or empty state entries;
 		else if A EQ "  District of Columbia" then A = "DC";
-			/*else if State EQ " Arkansas" then State = "Arkansas";
-				else if State EQ " California" then State = "Calfornia";
-					else if State EQ " New York" then State = "New York";*/
 	A = strip(A); *Remove leading and trailing blank spaces;
 run;
 
-proc sort data = HouseholdSizeEdit out = HouseholdSizeSort; by State;
+proc sort data = HouseholdSizeEdit out = HouseholdSizeSort; by State; *Sort by State to ensure in correct order before merge with edData;
 run;
 
-proc print data = HouseholdSizeSort; run; /*/////// CLEANED ////////*/
+proc print data = HouseholdSizeSort; run;
 
 
 
@@ -289,6 +276,7 @@ run;
 
 proc print data = StudentsPerTeacherEdit; run;
 
+/* Create state mapper data set to map full state names to abbreviated state names */
 data StateMap;
 input ST $ State $20.;
 datalines;
@@ -347,12 +335,13 @@ WY	Wyoming
 proc print data = StateMap;
 run;
 
+/* Map Students Per Teacher data state names*/
 data StudentsPerTeacherMapped;
 	merge StudentsPerTeacherEdit StateMap; by ST;
 	drop ST;
 run;
 
-proc sort data = StudentsPerTeacherMapped out = StudentsPerTeacherSort; by State;
+proc sort data = StudentsPerTeacherMapped out = StudentsPerTeacherSort; by State; *Sort by State to ensure in correct order before merge with edData;
 run;
 
 proc print data = StudentsPerTeacherSort; run; /*/////// CLEANED ////////*/
@@ -367,9 +356,12 @@ run;
 
 proc print data = msds6306.FinalData; run;
 
+
+
+
 /* Write merged file to CSV */
 proc export data = msds6306.FinalData
-	outfile = '\\Client\C$\Users\Owner\Documents\GitHub\MSDS_6306\MSDS6306_HwUploads\PostLiveSession_HW12\MergedData.csv'
+	outfile = '\\Client\C$\Users\Owner\Documents\GitHub\MSDS_6306\MSDS6306_HwUploads\PostLiveSession_HW12\Cboomhower_PostLiveSessionHW12_MergedData.csv'
 	dbms=csv
 	replace;
 run;
